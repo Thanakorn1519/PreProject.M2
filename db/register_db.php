@@ -18,14 +18,17 @@ if (isset($_POST['register'])) {
     if ($data) {
         if ($data['username'] == $username) {
             array_push($errors, "Username already exists");
+            $_SESSION['error'] = "Username already exists";
         }
         if ($data['email'] == $email) {
             array_push($errors, "Email already exists");
+            $_SESSION['error'] = "Email already exists";
         }
     }
 
     if ($password_1 != $password_2) {
-        array_push($errors, "Password is Match.");
+        array_push($errors, "Password is Not Match.");
+        $_SESSION['error'] = "Password is Not Match.";
     }
     // echo count($errors);
     if (count($errors) == 0) {

@@ -82,9 +82,9 @@ function showData($id = 0)
                   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#insertData">Add</button>
                 </div>
                 <!-- 💻💻 TableView-->
-                <table class="table text-white mb-0">
+                <table class="table text-white mb-0 table-hover table-borderless">
                   <thead>
-                    <tr>
+                    <tr class="text-center">
                       <th scope="col">ID</th>
                       <th scope="col">Date</th>
                       <th scope="col">Destrition</th>
@@ -95,17 +95,25 @@ function showData($id = 0)
                     </tr>
                   </thead>
                   <?php $rows = showData() ?>
+                  <?php $sumBalance = 0; ?>
+                  <?php $sumIncome = 0; ?>
+                  <?php $sumExpenses = 0; ?>
+                  <?php $count = 1 ?>
                   <?php foreach ($rows as $data) : ?>
                     <?php if ($data['user_id'] == $_SESSION['username_id']) : ?>
+                      <?php $balance = $data['Income'] - $data['Expenses'] ?>
+                      <?php $sumBalance += $balance; ?>
+                      <?php $sumIncome += $data['Income'];  ?>
+                      <?php $sumExpenses += $data['Expenses']; ?>
                       <?php include "./template/model_edit.php" ?>
                       <tbody class="text-center">
                         <tr class="fw-normal">
-                          <td><?= $data['ID'] ?></td>
+                          <td><?= $count ?></td>
                           <td><?= $data['Date'] ?></td>
                           <td><?= $data['Description'] ?></td>
                           <td><?= $data['Income'] ?></td>
                           <td><?= $data['Expenses'] ?></td>
-                          <td><?= $data['Balance'] ?></td>
+                          <td><?= $balance ?></td>
                           <td class="d-flex justify-content-center">
                             <button type="submit" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#edit_<?= $data['ID'] ?>">Edit</button>
                             <form action="./db/check.php" method="post">
@@ -114,8 +122,15 @@ function showData($id = 0)
                             </form>
                             </a>
                           </td>
+                          <?php $count += 1; ?>
                         <?php endif ?>
                       <?php endforeach ?>
+                        <tr>
+                          <td colspan="3">รวม</td>
+                          <td><?= $sumIncome ?></td>
+                          <td><?= $sumExpenses ?></td>
+                          <td><?= $sumBalance ?></td>
+                        </tr>
                       </tbody>
                 </table>
               </div>

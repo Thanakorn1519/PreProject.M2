@@ -21,22 +21,34 @@
                             <div class="mb-md-5 mt-md-4 pb-5">
                                 <h2 class="fw-bold mb-2 text-uppercase">Sign up</h2>
                                 <p class="text-white-50 mb-5">Pleate sign up for start!</p>
-                                <form action="./db/register_db.php" method="post">
+
+                                <?php if (isset($_SESSION['error'])) : ?>
+                                    <div class="error card bg-danger text-white">
+                                        <p class="h4 card-body p-1 b">
+                                            <?php
+                                            echo $_SESSION['error'];
+                                            unset($_SESSION['error']);
+                                            ?>
+                                        </p>
+                                    </div>
+                                <?php endif ?>
+
+                                <form action="./db/register_db.php" method="post" class="mt-2">
                                     <div class="form-outline form-white mb-4">
-                                        <input type="text" name="username" id="typeEmailX" class="form-control form-control-lg" />
+                                        <input type="text" name="username" id="typeEmailX" class="form-control form-control-lg" required />
                                         <label class="form-label" for="typeEmailX">Username</label>
                                     </div>
                                     <div class="form-outline form-white mb-4">
-                                        <input type="email" name="email" id="typeEmailX" class="form-control form-control-lg" />
+                                        <input type="email" name="email" id="typeEmailX" class="form-control form-control-lg" required />
                                         <label class="form-label" for="typeEmailX">Email</label>
                                     </div>
 
                                     <div class="form-outline form-white mb-4">
-                                        <input type="password" name="password_1" id="typePasswordX" class="form-control form-control-lg" />
+                                        <input type="password" name="password_1" id="typePasswordX" class="form-control form-control-lg" required />
                                         <label class="form-label" for="typePasswordX">Password</label>
                                     </div>
                                     <div class="form-outline form-white mb-4">
-                                        <input type="password" name="password_2" id="typePasswordX" class="form-control form-control-lg" />
+                                        <input type="password" name="password_2" id="typePasswordX" class="form-control form-control-lg" required />
                                         <label class="form-label" for="typePasswordX">Password Confirm</label>
                                     </div>
                                     <button name="register" class="btn btn-outline-light btn-lg px-5" type="submit">Sign up</button>

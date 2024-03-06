@@ -45,7 +45,7 @@
                     </div>
                     <input type="text" name="ledgerid_id" value=<?= $data['ID'] ?> hidden>
                     <div class="text-end d-flex justify-content-end">
-                        <button type="submit" name="delete" class="btn btn-primary">Submit</button>
+                        <button type="submit" name="update" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>

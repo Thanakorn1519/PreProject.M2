@@ -24,14 +24,25 @@
                                 <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
                                 <p class="text-white-50 mb-5">Please enter your login and password!</p>
 
-                                <form action="./db/login_db.php" method="post">
+                                <?php if (isset($_SESSION['error'])) : ?>
+                                    <div class="error card bg-danger text-white">
+                                        <p class="h4 card-body p-1 b">
+                                            <?php
+                                            echo $_SESSION['error'];
+                                            unset($_SESSION['error']);
+                                            ?>
+                                        </p>
+                                    </div>
+                                <?php endif ?>
+
+                                <form action="./db/login_db.php" method="post" class="mt-2">
                                     <div class="form-outline form-white mb-4">
-                                        <input type="text" name="username" id="typeEmailX" class="form-control form-control-lg" />
+                                        <input type="text" name="username" id="typeEmailX" class="form-control form-control-lg" required />
                                         <label class="form-label" for="typeEmailX">Username</label>
                                     </div>
 
                                     <div class="form-outline form-white mb-4">
-                                        <input type="password" name="password" id="typePasswordX" class="form-control form-control-lg" />
+                                        <input type="password" name="password" id="typePasswordX" class="form-control form-control-lg" required />
                                         <label class="form-label" for="typePasswordX">Password</label>
                                     </div>
 

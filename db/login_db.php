@@ -18,12 +18,13 @@ if (isset($_POST['login'])) {
     $data = $stmt->fetch();
 
     if ($data) {
-        $_SESSION['username_id'] = $data['user_id'];
         if (count($erros) == 0) {
+            $_SESSION['username_id'] = $data['user_id'];
             $_SESSION['username'] = $username;
             header('Location: ../index.php');
         }
     } else {
+        $_SESSION['error'] = "Username & Password is wrong.";
         header('Location: ../login.php');
     }
 }
