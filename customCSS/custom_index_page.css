@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url("../img/wee2.jpg");
+    background-size: 100%;
+}
+
+.c-container{
+    border: 1px solid red;
+    background: white;
+    opacity: 0.35;
+    min-height: 100vh;
+}
+
+.c-container-1{
+    opacity: none;
+    z-index: 1;
+}
