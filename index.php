@@ -1,3 +1,34 @@
+<?php session_start() ?>
+<?php
+if (!isset($_SESSION['username'])) {
+  header('Location: login.php');
+}
+if (isset($_GET['logout'])) {
+  session_destroy();
+  header("Location: login.php");
+}
+?>
+<?php
+function showData($id = 0)
+{
+  include './db/condb.php';
+
+  $sql = 'SELECT * FROM ledgerid';
+  if ($id == 0) {
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetchAll();
+  } else {
+    $sql .= " WHERE ID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(1, $id);
+    $stmt->execute();
+    $rows = $stmt->fetch();
+  }
+  return $rows;
+}
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -10,26 +41,45 @@
 </head>
 
 <body>
-  <!-- opacity image -->
+  <!-- create Navbar -->
+  <nav class="navbar bg-body-tertiary">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <p class="h3">Account</p>
+      </a>
+      <div class="nav justify-content-end">
+        <li class="nav-item">
+          <a class="nav-link" href="#"><?= $_SESSION['username'] ?></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="?logout='1'" aria-disabled="true">Logout</a>
+        </li>
+      </div>
+    </div>
+  </nav>
+
+  <!-- include model add -->
+  <?php include "./template/model_add.php"; ?>
+
+
+
   <!-- Content -->
   <div class="container">
-
     <!-- 🃏🃏 Card content-->
     <section class="vh-500 gradient-custom-2">
       <div class="container py-5 h-00">
         <div class="row d-flex justify-content-center align-items-center h-00">
           <div class="col-md-12 col-xl-10">
 
+            <!-- content card -->
             <div class="card mask-custom">
               <div class="card-body p-4 text-white">
-
                 <div class="text-center pt-3 pb-2 text-info">
                   <span class="my-4 h1">Account</span>
                 </div>
+                <!-- Button trigger modal -->
                 <div>
-                  <a href="page/page_add.php">
-                    <button type="button" class="btn btn-success">ADD</button>
-                  </a>
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#insertData">Add</button>
                 </div>
                 <!-- 💻💻 TableView-->
                 <table class="table text-white mb-0">
@@ -42,61 +92,31 @@
                       <th scope="col">Expenses</th>
                       <th scope="col">Balance</th>
                       <th scope="col"></th>
-
                     </tr>
                   </thead>
-                  <?php
-                  include 'page/condb.php';
-                  $sql = "SELECT * FROM ledgerid";
-                  $result = $conn->query($sql);
-                  $count = 1;
-                  $netBalance = 0;
-                  $netIncome = 0;
-                  $netExpenses = 0;
-                  if ($result->num_rows > 0) {
-                    // output data of each row
-                    while ($row = $result->fetch_assoc()) {
-                      $Balance = $row["Income"] - $row["Expenses"];
-                      $netBalance += $Balance;
-                      $netIncome += $row["Income"];
-                      $netExpenses += $row["Expenses"];
-                      echo '
+                  <?php $rows = showData() ?>
+                  <?php foreach ($rows as $data) : ?>
+                    <?php if ($data['user_id'] == $_SESSION['username_id']) : ?>
+                      <?php include "./template/model_edit.php" ?>
                       <tbody class="text-center">
-                      <tr class="fw-normal">
-                        <td>
-                          ' . $count . '
-                        </td>
-                        <td>' . $row["Date"] . '</td> 
-                        <td>' . $row["Destrition"] . '</td> 
-                        <td>' . $row["Income"] . '</td> 
-                        <td>' . $row["Expenses"] . '</td> 
-                        <td>' . $Balance . '</td> 
-                        <td>
-                        <a href = "./page/page_edit.php?target_id=' . $row["ID"] . '">
-                          <button type="button" class="btn btn-primary">Edit</button>
-                        </a>
-                        <a href = "./page/check.php?value=delete&&target_id=' . $row["ID"] . '">
-                          <button type="submit" class="btn btn-danger"">Delete</button
-                        </a>
-                        </td> 
-                      </tr>';
-                      $count++;
-                    }
-                  } else {
-                    echo "0 results";
-                  }
-                  $conn->close();
-                  ?>
-                  <?php
-                  echo '<tr class="fw-normal">
-                    <td colspan="3">รวม</td>
-                    <td class="text-center">' . $netIncome . '</td>
-                    <td class="text-center">' . $netExpenses . '</td>
-                    <td class="text-center">' . $netBalance . '</td>
-                    <td class="text-center"></td>
-                    </tr>'
-                  ?>
-                  </tbody>
+                        <tr class="fw-normal">
+                          <td><?= $data['ID'] ?></td>
+                          <td><?= $data['Date'] ?></td>
+                          <td><?= $data['Description'] ?></td>
+                          <td><?= $data['Income'] ?></td>
+                          <td><?= $data['Expenses'] ?></td>
+                          <td><?= $data['Balance'] ?></td>
+                          <td class="d-flex justify-content-center">
+                            <button type="submit" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#edit_<?= $data['ID'] ?>">Edit</button>
+                            <form action="./db/check.php" method="post">
+                              <input type="text" value=<?= $data['ID'] ?> name="ledgerid_id" hidden>
+                              <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+                            </form>
+                            </a>
+                          </td>
+                        <?php endif ?>
+                      <?php endforeach ?>
+                      </tbody>
                 </table>
               </div>
             </div>
@@ -109,7 +129,7 @@
 
 
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 
 </html>
